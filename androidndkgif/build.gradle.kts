@@ -1,5 +1,6 @@
 plugins {
     id("com.android.library")
+    id("maven-publish")
 }
 
 android {
@@ -15,6 +16,12 @@ android {
 
         ndk {
             abiFilters += listOf("arm64-v8a", "x86_64", "armeabi-v7a", "x86")
+        }
+    }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
         }
     }
 
@@ -39,8 +46,17 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-}
 
+}
+publishing {
+    publications {
+        create<MavenPublication>("release") {
+            afterEvaluate {
+                from(components["release"])
+            }
+        }
+    }
+}
 dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
